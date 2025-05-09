@@ -1,34 +1,59 @@
-import React, { FC } from 'react';
+import { FC, useRef } from 'react';
 import styles from './app-header.module.css';
 import { TAppHeaderUIProps } from './type';
 import {
+  ArrowDownIcon,
   BurgerIcon,
+  CloseIcon,
   ListIcon,
   Logo,
+  MenuIcon,
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
+import { NavLink } from 'react-router-dom';
+import { ProfileMenu } from '@components';
+import { CSSTransition } from 'react-transition-group';
 
 export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
   <header className={styles.header}>
-    <nav className={`${styles.menu} p-4`}>
+    <nav className={styles.menu}>
       <div className={styles.menu_part_left}>
-        <>
+        <NavLink
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.link_active : ''}`
+          }
+          to={'/'}
+        >
           <BurgerIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2 mr-10'>Конструктор</p>
-        </>
-        <>
+          <p className={`text ml-2 mr-10 ${styles.text_type_link}`}>
+            Конструктор
+          </p>
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.link_active : ''}`
+          }
+          to={'/feed'}
+        >
           <ListIcon type={'primary'} />
           <p className='text text_type_main-default ml-2'>Лента заказов</p>
-        </>
+        </NavLink>
       </div>
       <div className={styles.logo}>
-        <Logo className='' />
+        <Logo className={styles.logo_element} />
       </div>
-      <div className={styles.link_position_last}>
-        <ProfileIcon type={'primary'} />
-        <p className='text text_type_main-default ml-2'>
-          {userName || 'Личный кабинет'}
-        </p>
+      <div className={styles.menu_part_right}>
+        <NavLink
+          className={({ isActive }) =>
+            `${styles.link} ${styles.link_position_last} ${isActive ? styles.link_active : ''}`
+          }
+          to={userName ? '/profile' : '/login'}
+        >
+          <ProfileIcon type={'primary'} />
+          <p className='text text_type_main-default ml-2'>
+            {userName || 'Личный кабинет'}
+          </p>
+        </NavLink>
       </div>
     </nav>
   </header>

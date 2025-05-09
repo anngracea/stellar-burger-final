@@ -1,23 +1,37 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useLocation, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  resetOrderResponse,
+  selectAllIngredients,
+  getOrderByNumber,
+  getOrderSelector
+} from '@slices';
+import styles from '../ui/order-info/order-info.module.css';
+import clsx from 'clsx';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
-  const ingredients: TIngredient[] = [];
+  const { number } = useParams();
+  const dispatch = useDispatch();
 
-  /* Готовим данные для отображения */
+  const orderData = useSelector(getOrderSelector);
+  const ingredients: TIngredient[] = useSelector(selectAllIngredients);
+  const location = useLocation();
+  const isModal = !!location.state?.backgroundLocation;
+
+  useEffect(() => {
+    setIsLoading(true);
+    dispatch(resetOrderResponse());
+    dispatch(getOrderByNumber(Number(number))).finally(() => {
+      setIsLoading(false);
+    });
+  }, [dispatch, number]);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -59,9 +73,13 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
-    return <Preloader />;
-  }
-
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  return (
+    <div className={clsx(styles.wrap, { [styles.page]: !isModal })}>
+      {isLoading || !orderInfo ? (
+        <Preloader />
+      ) : (
+        <OrderInfoUI orderInfo={orderInfo} />
+      )}
+    </div>
+  );
 };
