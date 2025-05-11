@@ -1,7 +1,6 @@
 .container {
-  width: 1240px;
   display: flex;
-  justify-content: flex-start;
+  margin-left: 260px;
 }
 
 .form {
@@ -15,25 +14,4 @@
 
 .title {
   display: none;
-}
-
-@media (width < 1201px) {
-  .container {
-    width: 100%;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .menu {
-    display: none;
-  }
-
-  .title {
-    display: flex;
-    padding: 20px 0;
-  }
-
-  .form {
-    margin: 0;
-  }
 }

@@ -4,10 +4,10 @@
 
 .main {
   display: flex;
-  height: 95%;
+  height: 100%;
+  width: 1240px;
   overflow: hidden;
-  max-width: 1240px;
-  width: 100%;
+  margin: 0 auto;
 }
 
 .orders {
@@ -15,24 +15,3 @@
   margin-top: 40px;
 }
 
-.title {
-  display: none;
-}
-
-@media (width < 1201px) {
-  .menu {
-    display: none;
-  }
-
-  .title {
-    display: flex;
-    padding: 20px 0;
-  }
-
-  .orders {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}

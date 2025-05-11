@@ -1,24 +1,50 @@
 import { selectIsAuthChecked, selectUserData } from '@slices';
 import { useSelector } from '../../services/store';
-import { useLocation } from 'react-router-dom';
-import { ProtectedRouteUI } from '@ui';
-import { TProtectedRouteProps } from './type';
+import { Navigate, useLocation } from 'react-router-dom';
+import { Preloader } from '@ui';
+import { ReactNode } from 'react';
+
+export type ProtectedRouteProps = {
+  onlyUnAuth?: boolean;
+  children: ReactNode;
+};
 
 export const ProtectedRoute = ({
   onlyUnAuth,
-  element
-}: TProtectedRouteProps) => {
-  const isAuthChecked = useSelector(selectIsAuthChecked);
-  const user = useSelector(selectUserData);
+  children
+}: ProtectedRouteProps) => {
+  const isUserChecked = useSelector(selectIsAuthChecked);
+  const userProfile = useSelector(selectUserData);
   const location = useLocation();
 
-  return (
-    <ProtectedRouteUI
-      onlyUnAuth={onlyUnAuth}
-      isAuthChecked={isAuthChecked}
-      user={user}
-      location={location}
-      element={element}
-    />
-  );
+  if (!isUserChecked) {
+    return <Preloader />;
+  }
+
+  if (!userProfile && !onlyUnAuth) {
+    return (
+      <Navigate
+        replace
+        to='/login'
+        state={{
+          from: location,
+          backgroundLocation: location.state?.backgroundLocation || location
+        }}
+      />
+    );
+  }
+
+  if (userProfile && onlyUnAuth) {
+    const from = location.state?.from || { pathname: '/profile' };
+
+    return (
+      <Navigate
+        replace
+        to={from}
+        state={{ backgroundLocation: from?.state?.backgroundLocation }}
+      />
+    );
+  }
+
+  return children;
 };

@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { useDispatch } from '../../services/store';
 import { checkUserAuth, fetchIngredients } from '@slices';
 import { AppRoutes } from './app-routes';
+import { AppHeader } from '@components';
+import styles from './app.module.css';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -15,7 +17,10 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <div className={styles.app}>
+        <AppHeader />
+        <AppRoutes />
+      </div>
     </BrowserRouter>
   );
 };

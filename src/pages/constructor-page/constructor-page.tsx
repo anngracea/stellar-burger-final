@@ -1,10 +1,9 @@
-import { useSelector } from '../../services/store';
 import { FC } from 'react';
-import { selectIsIngredientsLoading } from '@slices';
-import { ConstructorPageUI } from '@ui-pages';
+import { useSelector } from 'react-redux';
+import { selectIsLoading } from '@slices';
+import { ConstructorPageUI } from '../../components/ui/pages/constructor-page';
 
 export const ConstructorPage: FC = () => {
-  const isIngredientsLoading = useSelector(selectIsIngredientsLoading);
-
+  const isIngredientsLoading = useSelector(selectIsLoading);
   return <ConstructorPageUI isIngredientsLoading={isIngredientsLoading} />;
 };

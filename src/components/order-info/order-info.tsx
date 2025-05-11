@@ -73,13 +73,9 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  return (
-    <div className={clsx(styles.wrap, { [styles.page]: !isModal })}>
-      {isLoading || !orderInfo ? (
-        <Preloader />
-      ) : (
-        <OrderInfoUI orderInfo={orderInfo} />
-      )}
-    </div>
-  );
+  if (!orderInfo) {
+    return <Preloader />;
+  }
+
+  return <OrderInfoUI orderInfo={orderInfo} />;
 };

@@ -1,4 +1,5 @@
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LoginUI } from '@ui-pages';
 import { useDispatch, useSelector } from '../../services/store';
 import {
@@ -13,39 +14,47 @@ import { TLoginData } from '@api';
 
 export const Login: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Хук для управления формой
+  const from = (location.state as any)?.from || { pathname: '/profile' };
+
   const [formData, handleInputChange, handleSubmit, inputErrors, isValid] =
     useInputForm({
       email: '',
       password: ''
     });
 
-  // Ошибки инпутов
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({
     email: false,
     password: false
   });
 
-  // Глобальные флаги
   const isError = useSelector(selectError);
   const isLoading = useSelector(selectIsLoading);
 
-  // Очистка глобальной ошибки при монтировании
   useEffect(() => {
     dispatch(resetErrorMessage());
   }, [dispatch]);
 
-  // Обработка сабмита формы
-  const onSubmit = (e: SyntheticEvent) => {
+  const onSubmit = async (e: SyntheticEvent) => {
     handleSubmit(e);
     setFieldErrors(inputErrors);
+
     if (isValid) {
-      dispatch(loginUser(formData as TLoginData));
+      const result = await dispatch(loginUser(formData as TLoginData));
+
+      if (loginUser.fulfilled.match(result)) {
+        navigate(from, {
+          replace: true,
+          state: {
+            backgroundLocation: from?.state?.backgroundLocation
+          }
+        });
+      }
     }
   };
 
-  // Очистка ошибки поля при фокусе
   const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
   };

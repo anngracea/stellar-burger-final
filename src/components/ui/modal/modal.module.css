@@ -44,19 +44,4 @@
   align-items: center;
 }
 
-@media (width < 769px) {
-  .modal {
-    inset: 0;
-    transform: translate(0, 0);
-    padding: 20px;
-    border-radius: 0;
-    overflow: hidden;
-    height: 100dvh;
-  }
 
-  .content {
-    margin: 0 12px;
-    height: calc(100dvh - 64px);
-    justify-content: center;
-  }
-}

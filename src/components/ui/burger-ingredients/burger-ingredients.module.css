@@ -33,30 +33,3 @@ p {
   line-height: 30px;
 }
 
-@media (width < 1331px) {
-  .burger_ingredients {
-    overflow: hidden;
-    margin-bottom: 75px;
-  }
-}
-
-@media (width < 769px) {
-  .burger_ingredients {
-    margin-bottom: 50px;
-  }
-}
-
-@media (width < 651px) {
-  .burger_ingredients {
-    max-width: 100%;
-  }
-
-  .menu {
-    width: 100%;
-  }
-
-  .content {
-    margin-left: 8px;
-    margin-right: 8px;
-  }
-}
