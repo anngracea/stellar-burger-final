@@ -17,7 +17,19 @@ export const Login: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as any)?.from || { pathname: '/profile' };
+  const fromLocation = (location.state as any)?.from;
+  const fromPath =
+    typeof fromLocation?.pathname === 'string' ? fromLocation.pathname : null;
+
+  // - если пришёл с /profile → оставляем /profile
+  // - если пришёл с /login или вообще без from → /profile
+  // - иначе → / (то есть, с оформления заказа или любой другой страницы)
+  const redirectTo =
+    !fromPath || fromPath === '/login'
+      ? '/profile'
+      : fromPath === '/profile'
+        ? '/profile'
+        : '/';
 
   const [formData, handleInputChange, handleSubmit, inputErrors, isValid] =
     useInputForm({
@@ -45,11 +57,8 @@ export const Login: FC = () => {
       const result = await dispatch(loginUser(formData as TLoginData));
 
       if (loginUser.fulfilled.match(result)) {
-        navigate(from, {
-          replace: true,
-          state: {
-            backgroundLocation: from?.state?.backgroundLocation
-          }
+        navigate(redirectTo, {
+          replace: true
         });
       }
     }

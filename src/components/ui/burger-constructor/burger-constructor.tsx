@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import {
   Button,
-  CloseIcon,
   CurrencyIcon
 } from '@zlden/react-developer-burger-ui-components';
 import styles from './burger-constructor.module.css';
@@ -19,10 +18,8 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   price,
   orderModalData,
   onOrderClick,
-  closeOrderModal,
-  onCloseClick
+  closeOrderModal
 }) => {
-  const textButton = 'Оформить заказ';
   const disabledButton =
     constructorItems.bun && constructorItems.ingredients.length > 0
       ? false

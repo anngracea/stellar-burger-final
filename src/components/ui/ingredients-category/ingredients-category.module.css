@@ -1,15 +1,9 @@
 .items {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 32px 40px;
+  gap: 24px;
   margin: 0;
   padding: 0;
   margin-bottom: 20px;
 }
 
-@media (width < 769px) {
-  .items {
-    gap: 16px;
-    padding-right: 12px;
-  }
-}

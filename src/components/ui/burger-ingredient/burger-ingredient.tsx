@@ -11,6 +11,8 @@ import {
 import { TBurgerIngredientUIProps } from './type';
 import { DragPreviewImage, useDrag } from 'react-dnd';
 
+import PlusIcon from '../../../assets/add.svg';
+
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
   ({ ingredient, count, handleAdd, locationState }) => {
     const { image, price, name, _id } = ingredient;
@@ -25,7 +27,7 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
 
     return (
       <>
-        <DragPreviewImage connect={preview} src={ingredient.image} />
+        <DragPreviewImage connect={preview} src={image} />
         <li
           data-cy={ingredient._id}
           className={styles.container}
@@ -37,30 +39,34 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
             to={`/ingredients/${_id}`}
             state={locationState}
           >
-            {count > 0 && <Counter count={count} />}
-            <img
-              className={styles.img}
-              src={image}
-              alt='картинка ингредиента.'
-            />
+            <div className={styles.imageWrapper}>
+              {count > 0 && <Counter count={count} />}
+              <img
+                className={styles.img}
+                src={image}
+                alt='картинка ингредиента.'
+              />
+            </div>
+
+            <div className={styles.price}>
+              <p className='text text_type_digits-default mr-2'>{price}</p>
+              <CurrencyIcon type='primary' />
+            </div>
+
             <p className={`text text_type_main-default ${styles.text}`}>
               {name}
             </p>
           </Link>
-          <div className={styles.footer}>
-            <div className={styles.cost}>
-              <p className='text text_type_digits-default mr-2'>{price}</p>
-              <CurrencyIcon type='primary' />
-            </div>
-            <Button
-              type='secondary'
-              htmlType='button'
-              onClick={handleAdd}
-              extraClass={styles.addButton}
-            >
-              Добавить
-            </Button>
-          </div>
+
+          <Button
+            type='secondary'
+            htmlType='button'
+            onClick={handleAdd}
+            extraClass={styles.addButton}
+          >
+            <img src={PlusIcon} alt='добавить' className={styles.icon} />
+            <span className={styles.addText}>Добавить</span>
+          </Button>
         </li>
       </>
     );

@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import {
@@ -6,15 +7,15 @@ import {
   getOrderResponseSelector,
   selectUserData,
   orderBurger,
-  resetOrderResponse
+  resetOrderResponse,
+  selectConstructorItems
 } from '@slices';
-import { selectConstructorItems } from '@slices';
-import { useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // 🆕
 
   const user = useSelector(selectUserData);
   const constructorItems = useSelector(selectConstructorItems);
@@ -23,9 +24,13 @@ export const BurgerConstructor: FC = () => {
 
   const onOrderClick = () => {
     if (!user) {
-      navigate('/login');
+      navigate('/login', {
+        state: { from: location }
+      });
       return;
     }
+
+    setIsOpen(true);
     dispatch(orderBurger(constructorItems));
   };
 
@@ -39,7 +44,7 @@ export const BurgerConstructor: FC = () => {
   };
 
   useEffect(() => {
-    dispatch(resetOrderResponse()); // Очистка данных предыдущего заказа
+    dispatch(resetOrderResponse());
   }, [dispatch]);
 
   const price = useMemo(() => {

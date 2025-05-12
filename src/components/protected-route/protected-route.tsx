@@ -21,29 +21,31 @@ export const ProtectedRoute = ({
     return <Preloader />;
   }
 
+  // Если пользователь не авторизован и страница защищённая — редирект на login
   if (!userProfile && !onlyUnAuth) {
     return (
       <Navigate
-        replace
         to='/login'
+        replace
         state={{
-          from: location,
-          backgroundLocation: location.state?.backgroundLocation || location
+          from: location
         }}
       />
     );
   }
 
+  // Если пользователь авторизован, но пытается попасть на /login или /register
   if (userProfile && onlyUnAuth) {
-    const from = location.state?.from || { pathname: '/profile' };
+    const from = location.state?.from;
+    const fromPath = typeof from?.pathname === 'string' ? from.pathname : null;
 
-    return (
-      <Navigate
-        replace
-        to={from}
-        state={{ backgroundLocation: from?.state?.backgroundLocation }}
-      />
-    );
+    // если пришли на login вручную или был редирект с /profile → на главную
+    const redirectTo =
+      !fromPath || fromPath === '/login' || fromPath === '/profile'
+        ? '/'
+        : fromPath;
+
+    return <Navigate to={redirectTo} replace />;
   }
 
   return children;

@@ -1,11 +1,13 @@
 .container {
   display: flex;
-  margin-left: 260px;
+  justify-content: center; 
+  align-items: center;     
+  min-height: 50vh;  
 }
+
 
 .form {
   max-width: 480px;
-  margin-top: 120px;
 }
 
 .menu {
