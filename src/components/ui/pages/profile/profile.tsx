@@ -1,11 +1,12 @@
 import { FC } from 'react';
 
-import { Button, Input } from '@zlden/react-developer-burger-ui-components';
+import { Button } from '@zlden/react-developer-burger-ui-components';
 import styles from './profile.module.css';
 import commonStyles from '../common.module.css';
 
 import { ProfileUIProps } from './type';
 import { ProfileMenu } from '@components';
+import { Input } from '@ui';
 
 export const ProfileUI: FC<ProfileUIProps> = ({
   formValue,
@@ -15,12 +16,12 @@ export const ProfileUI: FC<ProfileUIProps> = ({
   handleCancel,
   handleInputChange
 }) => (
-  <main className={`${commonStyles.container}`}>
-    <div className={`mt-30 mr-15 ${styles.menu}`}>
+  <main className={`${styles.container}`}>
+    <div className={`mt-25 mr-15 ${styles.menu}`}>
       <ProfileMenu />
     </div>
     <form
-      className={`mt-30 ${styles.form} ${commonStyles.form}`}
+      className={`${styles.form} ${commonStyles.form}`}
       onSubmit={handleSubmit}
     >
       <>
@@ -35,6 +36,7 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            extraClass={commonStyles.input}
           />
         </div>
         <div className='pb-6'>
@@ -48,6 +50,7 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            extraClass={commonStyles.input}
           />
         </div>
         <div className='pb-6'>
@@ -61,6 +64,7 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            extraClass={commonStyles.input}
           />
         </div>
         {isFormChanged && (

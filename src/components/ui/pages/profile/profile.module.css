@@ -1,7 +1,19 @@
+.container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  min-height: 50vh;  
+}
+
+
+.form {
+  max-width: 480px;
+}
+
 .menu {
   width: 320px;
 }
 
-.form {
-  max-width: 480px;
+.title {
+  display: none;
 }

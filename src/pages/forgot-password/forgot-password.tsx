@@ -1,33 +1,65 @@
-import { FC, useState, SyntheticEvent } from 'react';
+import { FC, useEffect, useState, SyntheticEvent, FocusEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { forgotPasswordApi } from '@api';
 import { ForgotPasswordUI } from '@ui-pages';
+import { Preloader } from '@ui';
+
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  forgotPassword,
+  resetErrorMessage,
+  selectError,
+  selectIsLoading
+} from '@slices';
+
+import { useInputForm } from '../../hooks/useInputForm';
+
+const initialForm = { email: '' };
+const initialErrors = { email: false };
 
 export const ForgotPassword: FC = () => {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState<Error | null>(null);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const isLoading = useSelector(selectIsLoading);
+  const isError = useSelector(selectError);
 
-    setError(null);
-    forgotPasswordApi({ email })
-      .then(() => {
-        localStorage.setItem('resetPassword', 'true');
-        navigate('/reset-password', { replace: true });
-      })
-      .catch((err) => setError(err));
+  const [formData, handleInputChange, handleSubmit, inputErrors, isValid] =
+    useInputForm(initialForm);
+
+  const [fieldErrors, setFieldErrors] = useState(initialErrors);
+
+  useEffect(() => {
+    dispatch(resetErrorMessage());
+  }, [dispatch]);
+
+  const onSubmit = async (e: SyntheticEvent) => {
+    handleSubmit(e);
+    setFieldErrors(inputErrors as typeof initialErrors);
+
+    if (!isValid) return;
+
+    const result = await dispatch(forgotPassword({ email: formData.email }));
+    if (forgotPassword.fulfilled.match(result)) {
+      localStorage.setItem('resetPassword', 'true');
+      navigate('/reset-password', { replace: true });
+    }
   };
+
+  const onFocus = (e: FocusEvent<HTMLInputElement>) => {
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
+  };
+
+  if (isLoading) return <Preloader />;
 
   return (
     <ForgotPasswordUI
-      errorText={error?.message}
-      email={email}
-      setEmail={setEmail}
-      handleSubmit={handleSubmit}
+      email={formData.email}
+      errors={fieldErrors}
+      errorText={isError ? 'Электронный адрес не существует или не найден' : ''}
+      handleSubmit={onSubmit}
+      handleInputChange={handleInputChange}
+      onFocus={onFocus}
     />
   );
 };

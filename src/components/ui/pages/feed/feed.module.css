@@ -1,4 +1,4 @@
-.containerMain {
+.mainWrapper {
   display: flex;
   flex-direction: column;
   overflow: hidden;

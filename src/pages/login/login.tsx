@@ -1,22 +1,84 @@
-import { FC, SyntheticEvent, useState } from 'react';
+import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LoginUI } from '@ui-pages';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  selectError,
+  selectIsLoading,
+  loginUser,
+  resetErrorMessage
+} from '@slices';
+import { Preloader } from '@ui';
+import { useInputForm } from '../../hooks/useInputForm';
+import { TLoginData } from '@api';
 
 export const Login: FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const fromLocation = (location.state as any)?.from;
+  const fromPath =
+    typeof fromLocation?.pathname === 'string' ? fromLocation.pathname : null;
+
+  // - если пришёл с /profile → оставляем /profile
+  // - если пришёл с /login или вообще без from → /profile
+  // - иначе → / (то есть, с оформления заказа или любой другой страницы)
+  const redirectTo =
+    !fromPath || fromPath === '/login'
+      ? '/profile'
+      : fromPath === '/profile'
+        ? '/profile'
+        : '/';
+
+  const [formData, handleInputChange, handleSubmit, inputErrors, isValid] =
+    useInputForm({
+      email: '',
+      password: ''
+    });
+
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({
+    email: false,
+    password: false
+  });
+
+  const isError = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
+
+  useEffect(() => {
+    dispatch(resetErrorMessage());
+  }, [dispatch]);
+
+  const onSubmit = async (e: SyntheticEvent) => {
+    handleSubmit(e);
+    setFieldErrors(inputErrors);
+
+    if (isValid) {
+      const result = await dispatch(loginUser(formData as TLoginData));
+
+      if (loginUser.fulfilled.match(result)) {
+        navigate(redirectTo, {
+          replace: true
+        });
+      }
+    }
   };
+
+  const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
+  };
+
+  if (isLoading) return <Preloader />;
 
   return (
     <LoginUI
-      errorText=''
-      email={email}
-      setEmail={setEmail}
-      password={password}
-      setPassword={setPassword}
-      handleSubmit={handleSubmit}
+      email={formData.email}
+      password={formData.password}
+      errors={fieldErrors}
+      errorText={isError ? 'Электронный адрес или пароль введены неверно' : ''}
+      handleInputChange={handleInputChange}
+      handleSubmit={onSubmit}
+      onFocus={onFocus}
     />
   );
 };
